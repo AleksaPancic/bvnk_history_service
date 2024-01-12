@@ -5,6 +5,7 @@ import com.example.bvnk_history_service.entity.History;
 import com.example.bvnk_history_service.populator.Populator;
 import com.example.bvnk_history_service.repository.HistoryDAO;
 import com.example.bvnk_history_service.service.HistoryService;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -16,6 +17,8 @@ public class DefautHistoryService implements HistoryService {
 
 	private final HistoryDAO historyDAO;
 	private final Populator<HistoryDto, History> populator;
+
+	private static final Logger LOG = org.slf4j.LoggerFactory.getLogger(DefautHistoryService.class);
 
 	@Autowired
 	public DefautHistoryService(final HistoryDAO historyDAO, Populator<HistoryDto, History> populator) {
@@ -30,6 +33,7 @@ public class DefautHistoryService implements HistoryService {
 		if (history == null) {
 			throw new IllegalArgumentException(String.format("History for client with id %s not found", clientId));
 		}
+		LOG.info("History for client with id {} found", clientId);
 		return history;
 	}
 
@@ -43,6 +47,7 @@ public class DefautHistoryService implements HistoryService {
 		}
 		history = new History();
 		populator.populate(historyDto, history);
+		LOG.info("History for client with id {} created", historyDto.getClientId());
 		return historyDAO.saveAndFlush(history);
 	}
 
@@ -55,6 +60,7 @@ public class DefautHistoryService implements HistoryService {
 					String.format(String.format("History for client with id %s not found", historyDto.getClientId())));
 		}
 		populator.populate(historyDto, history);
+		LOG.info("History for client with id {} updated", historyDto.getClientId());
 		return historyDAO.saveAndFlush(history);
 	}
 
@@ -66,6 +72,7 @@ public class DefautHistoryService implements HistoryService {
 			throw new IllegalArgumentException(String.format(String.format("History for client with id %s not found", clientId)));
 		}
 		historyDAO.delete(history);
+		LOG.info("History for client with id {} deleted", clientId);
 		return history;
 	}
 
