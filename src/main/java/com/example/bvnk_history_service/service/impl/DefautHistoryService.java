@@ -7,6 +7,7 @@ import com.example.bvnk_history_service.repository.HistoryDAO;
 import com.example.bvnk_history_service.service.HistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 
@@ -22,6 +23,7 @@ public class DefautHistoryService implements HistoryService {
 		this.populator = populator;
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public History getHistoryForClient(final Long clientId) {
 		final History history = historyDAO.findByClientId(clientId).orElse(null);
@@ -34,9 +36,37 @@ public class DefautHistoryService implements HistoryService {
 	@Transactional
 	@Override
 	public History createHistoryForClient(final HistoryDto historyDto) {
-		final History history = new History();
+		History history = historyDAO.findByClientId(historyDto.getClientId()).orElse(null);
+		if(history!=null){
+			throw new IllegalArgumentException(
+					String.format(String.format("History for client with id %s already exists", historyDto.getClientId())));
+		}
+		history = new History();
 		populator.populate(historyDto, history);
 		return historyDAO.saveAndFlush(history);
+	}
+
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	@Override
+	public History updateHistory(final HistoryDto historyDto) {
+		final History history = historyDAO.findByClientId(historyDto.getClientId()).orElse(null);
+		if (history == null) {
+			throw new IllegalArgumentException(
+					String.format(String.format("History for client with id %s not found", historyDto.getClientId())));
+		}
+		populator.populate(historyDto, history);
+		return historyDAO.saveAndFlush(history);
+	}
+
+	@Transactional
+	@Override
+	public History deleteHistoryForClient(Long clientId) {
+		History history = historyDAO.findByClientId(clientId).orElse(null);
+		if (history == null) {
+			throw new IllegalArgumentException(String.format(String.format("History for client with id %s not found", clientId)));
+		}
+		historyDAO.delete(history);
+		return history;
 	}
 
 }

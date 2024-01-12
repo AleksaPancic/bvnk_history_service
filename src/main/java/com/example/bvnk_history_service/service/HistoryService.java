@@ -22,4 +22,20 @@ public interface HistoryService {
 	 */
 	History createHistoryForClient(HistoryDto historyDto);
 
+	/**
+	 * Updates the history using the provided HistoryDto.
+	 *
+	 * @param  historyDto  the HistoryDto object containing the data to update the history
+	 * @return             the updated History object
+	 */
+	History updateHistory(HistoryDto historyDto);
+
+	/**
+	 * Deletes the history for a specific client.
+	 *
+	 * @param  clientId  the ID of the client whose history will be deleted
+	 * @return           the deleted history object
+	 */
+	History deleteHistoryForClient(Long clientId);
+
 }

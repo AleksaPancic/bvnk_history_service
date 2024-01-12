@@ -43,7 +43,8 @@ public class HistoryController {
 	@PatchMapping("/{client_id}")
 	public ResponseEntity<History> updateHistoryForClient(@RequestHeader Map<String, String> headers,
 														  @RequestBody HistoryDto historyDto) {
-		return null;
+		Objects.requireNonNull(historyDto);
+		return ResponseEntity.ok().body(historyService.updateHistory(historyDto));
 	}
 
 	@PostMapping("/create")
@@ -57,7 +58,8 @@ public class HistoryController {
 	@DeleteMapping("/delete")
 	public ResponseEntity<History> deleteHistoryForClient(@RequestHeader Map<String, String> headers,
 														  @RequestParam Long clientId) {
-		return null;
+		Objects.requireNonNull(clientId);
+		return ResponseEntity.ok().body(historyService.deleteHistoryForClient(clientId));
 	}
 
 }
