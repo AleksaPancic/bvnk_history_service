@@ -1,9 +1,9 @@
 package com.example.bvnk_history_service.DTO;
 
-import lombok.Value;
+import lombok.Data;
 
 
-@Value
+@Data
 public class HistoryDto {
 	private Long clientId;
 	private String historyName;

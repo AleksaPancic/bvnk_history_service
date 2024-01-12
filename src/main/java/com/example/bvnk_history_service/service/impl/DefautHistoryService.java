@@ -41,7 +41,7 @@ public class DefautHistoryService implements HistoryService {
 	@Override
 	public History createHistoryForClient(final HistoryDto historyDto) {
 		History history = historyDAO.findByClientId(historyDto.getClientId()).orElse(null);
-		if(history!=null){
+		if (history != null) {
 			throw new IllegalArgumentException(
 					String.format(String.format("History for client with id %s already exists", historyDto.getClientId())));
 		}
@@ -51,13 +51,13 @@ public class DefautHistoryService implements HistoryService {
 		return historyDAO.saveAndFlush(history);
 	}
 
-	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	@Transactional
 	@Override
 	public History updateHistory(final HistoryDto historyDto) {
 		final History history = historyDAO.findByClientId(historyDto.getClientId()).orElse(null);
 		if (history == null) {
 			throw new IllegalArgumentException(
-					String.format(String.format("History for client with id %s not found", historyDto.getClientId())));
+					String.format("History for client with id %s not found", historyDto.getClientId()));
 		}
 		populator.populate(historyDto, history);
 		LOG.info("History for client with id {} updated", historyDto.getClientId());
@@ -69,7 +69,8 @@ public class DefautHistoryService implements HistoryService {
 	public History deleteHistoryForClient(Long clientId) {
 		History history = historyDAO.findByClientId(clientId).orElse(null);
 		if (history == null) {
-			throw new IllegalArgumentException(String.format(String.format("History for client with id %s not found", clientId)));
+			throw new IllegalArgumentException(String.format(String.format("History for client with id %s not found",
+																		   clientId)));
 		}
 		historyDAO.delete(history);
 		LOG.info("History for client with id {} deleted", clientId);
