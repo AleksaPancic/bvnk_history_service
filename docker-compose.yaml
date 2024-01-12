@@ -1,0 +1,30 @@
+services:
+  mysql:
+    image: mysql:latest
+    container_name: reportmysql
+    ports:
+      - 3309:3306
+    environment:
+      MYSQL_DATABASE: history_microservice
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "127.0.0.1" ]
+      interval: 10s
+      timeout: 4s
+      retries: 2
+  app:
+    image: history_microservice
+    container_name: history_microservice
+    depends_on:
+      mysql:
+        condition: service_healthy
+    build:
+      dockerfile: Dockerfile
+    environment:
+      MYSQL_HOST: reportmysql
+      MYSQL_PORT: 3306
+      MYSQL_PASSWORD: root
+    ports:
+      - 9100:9000
+      - 5300:5300
